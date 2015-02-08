@@ -1,0 +1,122 @@
+ï»¿# -----------------------------------------------------------
+# MinecraftGenius76 - Mini-Games
+# CAPTURE THE FLAG
+# Youtube: http://www.youtube.com/user/minecraftgenius76
+# language file
+# Contributor(s): mcg76
+# -----------------------------------------------------------
+languageCode: "BP"
+languageName: "PORTUGUESE"
+languageDescription: "Brazil Portuguese"
+version: "1.50"
+# -----------------------------------------------------------
+ctf:
+ name: "Capturar a Bandeira"
+ status: "Estado"
+ spawn_player: "enviar jogador"
+ conglatulations: "***** CONGLATULATIONS ********"
+ return-flag: "bandeira inimiga retorno"
+ return-waiting-area: "retornar jogador a ?a de espera"
+ left-game: " jogo esquerda CTF!"
+ finished: "CTF jogo terminou!"
+ red-team:
+  capturedflag: "equipe vermelha tem bandeira do inimigo capturado" 
+  score: " pontua? da equipe vermelha: "   
+ setup:
+  action: "configura? a? modo: " 
+  select: "[selecionar um bloco para definir esse local]" 
+  success: "sucesso! seleção salva."   
+  failed: "fracassado! incapaz salvar localiza? sinal:"     
+ blue-team:
+  capturedflag: "azul equipe tem bandeira do inimigo capturado" 
+  score: " azul pontua? da equipe: "   
+ error: 
+  wrong-sender: "Este comando s??de ser executado no jogo apenas!"
+  no-permission: "voc??est?utorizado a usar este comando!"
+  blueteam-flag-exist: "inv?do ! Bandeira azul equipe ainda existem."
+  redteam-flag-exist: "inv?do ! Bandeira da equipe Red ainda existem."
+  not-game-stop: "s?? jogo jogador permitir a emiss?de paragem"   
+plugin:
+ enable: "capturar a bandeira (CTF) mini- jogo - Ativado"
+ disable: "capturar a bandeira (CTF) mini- jogo - Inv?do "
+arena:
+ created: "CTF Arena criado!"
+sign:
+ teleport:
+  world: "jogador teletransporte para o mundo no CTF"
+  game: "envio de jogador para a ?a de jogo CTF"
+  spawn: "jogador de desova para -" 
+  ctf: "teleportar para o mundo CTF -" 
+ world-not-found: "mundo para casa encontrar incapaz"
+ done: "feito!"
+command:
+ ctf: "ctf"
+ home: "home"
+ joinred: "joinred"
+ joinblue: "joinblue"
+ stop: "stop"
+ leave: "leave"
+ start: "start"
+ stats: "stats"
+ blockon: "blockon"
+ blockoff: "blockoff"
+ setsignblue: "setsignblue"
+ setsignred: "setsignred"
+ setsignnew: "setsignnew"
+ setsignstats: "setsignstats" 
+team:
+ members: "membros:"
+ no-players: "equipes tem nenhum jogador deixou!" 
+ blue-no-players: "Equipe azul tem nenhum jogador deixou!"
+ red-no-players: "equipe vermelha tem nenhum jogador deixou!"  
+ blue: "Equipe azul"
+ red: "equipe vermelha"  
+ join-blue: "Junte-se a equipe azul"
+ join-red: "Junte-se a equipe vermelha"
+ left-blue: " equipe azul ?squerda"
+ left-red: " equipe vermelha ?squerda"
+ joined-blue: " time azul juntou!"
+ joined-red: " equipe vermelha se juntou"
+ welcome-blue: "Bem-vindo ?quipe azul!"
+ welcome-red: "bem-vindo ao time vermelho!"
+ tap-start: "quando estiver pronto , toque no bloco verde para iniciar"
+ scores:
+  title-status: "Capture a Bandeira | estado: "
+  red-players: " equipe vermelha tem "
+  blue-players: " azul equipe tem "
+  players: " jogadores"
+  round: " redondo"
+  score: " escores"
+  redteam-wins: " equipe vermelha ganha: "
+  blueteam-wins: " azul equipe vence: "	
+game:
+ player-left: "Jogador jogo licen?CTF"
+ player-stop: "Jogo Jogador Parar CTF"
+ player-start: "Jogo Jogador Iniciar CTF" 
+ stats: "CTF estat?icas de jogo"
+ not-enought-players: "Incapaz in?o , os jogadores da equipe n?o suficiente"
+ getready: "Por favor, prepare-se!"
+ in-progress: "jogo atual continua. por favor, aguarde!" 
+ hit-stop: "ou clique em bloco azul para parar" 
+ new-game: "Starting bew CTF game. Please join now!"  
+ nextround: "pr??a Rodada"
+ finished: "CTF jogo terminou!" 
+ roundstart: "come? em"
+ round: "redondo"
+ stop: "CTF jogo parado!" 
+ go: "come?o! ir!!!!"
+ full: "Desculpe , membros da equipe está cheio. por favor tente mais tarde juntar-se!"
+ start-equipment: "equipar jogador com armadura e comida"
+ remove-equipment:  "equipamentos jogador removidos"
+ resetting: "redefinir o jogo , isso pode demorar um pouco. por favor, aguarde...!"
+ ticks: " carrapatos."
+ final:
+  title: "CTF Parado , escore final"
+  red-team: " score resma vermelho: "
+  blue-team: " azul pontua? da equipe: "
+  red-win: "* vermelho vit?? da equipe! *"
+  blue-win: "* azul vit?? da equipe! *"
+  draw: "* TIE (desenhar) *"
+block:
+ display-on: "CTF posi? do bloco exibir em"
+ display-off: "CTF posi? do bloco exibir off"
