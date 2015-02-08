@@ -1,0 +1,140 @@
+# -------------------------------
+# CAPTURE THE FLAG CONFIGURATIONS
+# version v1.52
+# -------------------------------
+# Multi-languages support
+# EN - English 
+# KO - Korean 
+# CN - Chinese
+# JP - Japanese
+# SP - Spanish
+# FR - French
+# RU - Russina
+# BP - Brazil Portuguese
+# .... more
+# ---------------------------
+language: "EN"
+run_selftest_message: "YES"
+# ---------------------------
+# default world lobby location
+# ---------------------------
+enable_spaw_lobby: "no"
+# ---------------------------
+# added in jan.31.2015
+# enforce block changes in game world
+disable_CTF_world_blockBreak: true
+disable_CTF_world_blockPlace: true
+# ---------------------------
+lobby_world: "world"
+lobby_x: "489"
+lobby_y: "5"
+lobby_z: "388"
+#---------------------------
+ctf_game_world: "world"
+ctf_game_x: "147"
+ctf_game_y: "5"
+ctf_game_z: "188"
+#---------------------------
+# GAME SETTINGS
+#---------------------------
+maximum_team_players: "10"
+maximum_game_rounds: "3"
+
+# time in seconds
+round_wait_time: "30"
+#---------------------------
+# Arena Building Location
+#--------------------------- 
+ctf_arena_name: "world"
+ctf_arena_size: "26"
+ctf_arena_x: "123"
+ctf_arena_y: "4"
+ctf_arena_z: "148"
+#---------------------------
+# #fix01 - new customize fence
+# Fences
+# number are MC block id. eg
+# 85  - wood fence
+# 101 - iron fence
+# 98  - stone
+# 45  - brick
+# 48  - mossy stone
+#--------------------------- 
+ctf_border_fence: "85"
+blue_team_defence_wall: "61"
+red_team_defence_wall: "45"
+#---------------------------
+# waiting room
+#--------------------------- 
+ctf_waiting_room_x: "148"
+ctf_waiting_room_y: "4"
+ctf_waiting_room_z: "183"
+#---------------------------
+# New game sign
+#--------------------------- 
+ctf_new_sign_x: "149"
+ctf_new_sign_y: "5"
+ctf_new_sign_z: "180"
+#---------------------------
+# Game Stats sign
+#--------------------------- 
+ctf_stat_sign_x: "148"
+ctf_stat_sign_y: "5"
+ctf_stat_sign_z: "180"
+#---------------------------
+# Game Start Buttton Location
+#---------------------------
+ctf_start_button_1_x: "149"
+ctf_start_button_1_y: "8"
+ctf_start_button_1_z: "160"
+#---------------------------
+# Game Leave Buttton Location
+#---------------------------
+ctf_leave_button_1_x: "149"
+ctf_leave_button_1_y: "8"
+ctf_leave_button_1_z: "158"
+#---------------------------
+# Game Stop Buttton Location
+#---------------------------
+ctf_stop_button_1_x: "149"
+ctf_stop_button_1_y: "8"
+ctf_stop_button_1_z: "156"
+
+#---------------------------
+# RED TEAM
+#---------------------------
+ctf_red_team_flag_x: "173"
+ctf_red_team_flag_y: "8"
+ctf_red_team_flag_z: "149"
+#---------------------------
+ctf_red_team_enermy_flag_x: "172"
+ctf_red_team_enermy_flag_y: "8"
+ctf_red_team_enermy_flag_z: "149"
+#---------------------------
+ctf_red_team_join_sign1_x: "150"
+ctf_red_team_join_sign1_y: "5"
+ctf_red_team_join_sign1_z: "181"
+#---------------------------
+ctf_red_team_spawn_x: "170"
+ctf_red_team_spawn_y: "5"
+ctf_red_team_spawn_z: "152"
+
+#---------------------------
+# BLUE TEAM
+#---------------------------
+ctf_blue_team_flag_x: "124"
+ctf_blue_team_flag_y: "8"
+ctf_blue_team_flag_z: "150"
+#---------------------------
+ctf_blue_team_enermy_flag_x: "124"
+ctf_blue_team_enermy_flag_y: "8"
+ctf_blue_team_enermy_flag_z: "151"
+#---------------------------
+ctf_blue_team_join_sign1_x: "147"
+ctf_blue_team_join_sign1_y: "5"
+ctf_blue_team_join_sign1_z: "181"
+#---------------------------
+ctf_blue_team_spawn_x: "127"
+ctf_blue_team_spawn_y: "6"
+ctf_blue_team_spawn_z: "153"
+#---------------------------

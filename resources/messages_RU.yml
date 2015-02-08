@@ -1,0 +1,122 @@
+# -----------------------------------------------------------
+# MinecraftGenius76 - Mini-Games
+# CAPTURE THE FLAG
+# Youtube: http://www.youtube.com/user/minecraftgenius76
+# language file
+# Contributor(s): mcg76
+# -----------------------------------------------------------
+languageCode: "RU"
+languageName: "RUSSIAN"
+languageDescription: "RUSSIAN LANGUAGE"
+version: "1.50"
+# -----------------------------------------------------------
+ctf:
+ name: "захватить флаг"
+ status: "статус"
+ spawn_player: "отправить игрока"
+ conglatulations: "***** поздравление ********"
+ return-flag: "возвращение вражеский флаг"
+ return-waiting-area: "вернуться игрока зоне ожидания"
+ left-game: " оставить CTF игры!"
+ finished: "CTF игра закончена!"
+ red-team:
+  capturedflag: "RED Team has captured enemy flag" 
+  score: " Red Team Score: "   
+ setup:
+  action: "Setup Mode Action: " 
+  select: "[Select a Block to SET that location]" 
+  success: "Success! Saved Sign location:"   
+  failed: "Failed! Unable save Sign location:"     
+ blue-team:
+  capturedflag: "BLUE Team has captured enemy flag" 
+  score: " Blue Team Score: "   
+ error: 
+  wrong-sender: "This command can only run in-game only!"
+  no-permission: "You are not authorized to use this command!"
+  blueteam-flag-exist: "invalid! Blue team flag still exist."
+  redteam-flag-exist: "invalid! Red team flag still exist."
+  not-game-stop: "only in-game player allow to issue stop"   
+plugin:
+ enable: "Capture the Flag (CTF) Mini-Game - ENABLED"
+ disable: "Capture the Flag (CTF) Mini-Game - DISABLED "
+arena:
+ created: "CTF Arena Created!"
+sign:
+ teleport:
+  world: "teleporting player to CTF world at"
+  game: "sending player to CTF game area"
+  spawn: "spawn player to -" 
+  ctf: "teleport to CTF world -" 
+ world-not-found: "unable find home world"
+ done: "done!"
+command:
+ ctf: "ctf"
+ home: "home"
+ joinred: "joinred"
+ joinblue: "joinblue"
+ stop: "stop"
+ leave: "leave"
+ start: "start"
+ stats: "stats"
+ blockon: "blockon"
+ blockoff: "blockoff"
+ setsignblue: "setsignblue"
+ setsignred: "setsignred"
+ setsignnew: "setsignnew"
+ setsignstats: "setsignstats" 
+team:
+ members: "members:"
+ no-players: "Teams has no player left!" 
+ blue-no-players: "Blue Team has no player left!"
+ red-no-players: "Red Team has no player left!"  
+ blue: "Blue Team"
+ red: "Red Team"  
+ join-blue: "Join Blue team"
+ join-red: "Join Red team"
+ left-blue: " left Blue team"
+ left-red: " left Red team"
+ joined-blue: " joined BLUE team!"
+ joined-red: " joined RED team"
+ welcome-blue: "Welcome to BLUE team!"
+ welcome-red: "Welcome to RED team!"
+ tap-start: "when ready, tap the GREEN block to start"
+ scores:
+  title-status: "CAPTURE THE FLAG | Status: "
+  red-players: " RED Team has "
+  blue-players: " BLUE Team has "
+  players: " players"
+  round: " Round"
+  score: " Scores"
+  redteam-wins: " Red Team Wins: "
+  blueteam-wins: " Blue Team Wins: "	
+game:
+ player-left: "Player leave CTF game"
+ player-stop: "Player Stop CTF game"
+ player-start: "Player Start CTF game" 
+ stats: "CTF game stats"
+ not-enought-players: "Unable start, not enough team players"
+ getready: "Please get ready!"
+ in-progress: "current CTF game still on.  please wait!" 
+ hit-stop: "or click Blue Block to Stop" 
+ new-game: "Starting New CTF game. Please join now!"  
+ nextround: "Next Round"
+ finished: "CTF game finished!" 
+ roundstart: "start in"
+ round: "Round"
+ stop: "CTF game stopped!" 
+ go: "started! Go!!!!"
+ full: "Sorry, RED team memberships is full. please try join later!"
+ start-equipment: "equip player with armor and food"
+ remove-equipment:  "removed player equipments"
+ resetting: "RESETTING the game, this could take a moment. please wait...!"
+ ticks: " ticks."
+ final:
+  title: "CTF Stopped, FINAL scores"
+  red-team: " Red Team Score: "
+  blue-team: " Blue Team Score: "
+  red-win: "* RED TEAM WIN! *"
+  blue-win: "* BLUE TEAM WIN! *"
+  draw: "* TIE (Draw) *"
+block:
+ display-on: "CTF block position display ON"
+ display-off: "CTF block position display OFF"
