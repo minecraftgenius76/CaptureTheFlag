@@ -1,5 +1,5 @@
-
 CAPTURE THE FLAG - MINI-GAME  v1.5.3
+<pre>
 =========================================
 What is new?
 =========================================
@@ -399,6 +399,8 @@ Facebook: https://www.facebook.com/minecraftgenius76
 
 Planetminecraft: http://www.planetminecraft.com/member/minecraftgenius76/
 (Posted Projects)
+
+</pre>
 
 Thanks
 MinecraftGenius76
