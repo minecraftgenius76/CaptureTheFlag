@@ -25,7 +25,7 @@ ctf:
  setup:
   action: "configura? a? modo: " 
   select: "[selecionar um bloco para definir esse local]" 
-  success: "sucesso! seleção salva."   
+  success: "sucesso! localiza? sinal salvo:"   
   failed: "fracassado! incapaz salvar localiza? sinal:"     
  blue-team:
   capturedflag: "azul equipe tem bandeira do inimigo capturado" 
