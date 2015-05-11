@@ -330,8 +330,7 @@ class CTFGameKit extends MiniGameBase {
 		foreach ($foods as $w) {
 			$item = new Item($w[0],$w[1],$w[2]);
 			$p->getInventory ()->addItem($item);
-		}	
-		$p->updateMovement ();
+		}
 		$p->getInventory ()->setHeldItemIndex ( 0 );
 	}
 	
@@ -343,8 +342,7 @@ class CTFGameKit extends MiniGameBase {
 			$bp->getInventory ()->setLeggings ( new Item ( 0 ) );		
 			$bp->getInventory ()->sendArmorContents($bp->getViewers());
 			$bp->getInventory ()->sendContents ( $bp );					
-			$bp->getInventory ()->clearAll ();			
-			$bp->updateMovement ();
+			$bp->getInventory ()->clearAll ();
 		}
 	}
 	public function getArmor($type, $slot) {

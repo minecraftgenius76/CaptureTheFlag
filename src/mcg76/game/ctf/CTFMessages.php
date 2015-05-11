@@ -3,7 +3,6 @@
 namespace mcg76\game\ctf;
 
 use pocketmine\utils\Config;
-use mcg76\game\ctf\CTFMessages;
 
 /**
  * MCG76 CTF Messages

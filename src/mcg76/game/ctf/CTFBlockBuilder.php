@@ -2,44 +2,16 @@
 
 namespace mcg76\game\ctf;
 
-use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
-use pocketmine\plugin\PluginBase;
-use pocketmine\utils\TextFormat;
+
 use pocketmine\Player;
-use pocketmine\Server;
-use pocketmine\utils\Config;
 use pocketmine\level\Position;
 use pocketmine\level\Level;
-use pocketmine\utils\Cache;
-use pocketmine\level\Explosion;
-use pocketmine\event\block\BlockEvent;
-use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\block\BlockBreakEvent;
-use pocketmine\event\entity\EntityMotionEvent;
-use pocketmine\event\Listener;
 use pocketmine\math\Vector3 as Vector3;
-use pocketmine\math\Vector2 as Vector2;
-use pocketmine\event\player\PlayerJoinEvent;
-use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\event\player\PlayerRespawnEvent;
-use pocketmine\event\player\PlayerLoginEvent;
-use pocketmine\network\protocol\AddMobPacket;
-use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\network\protocol\UpdateBlockPacket;
 use pocketmine\block\Block;
-use pocketmine\event\server\DataPacketReceiveEvent;
-use pocketmine\event\server\DataPacketSendEvent;
-use pocketmine\network\protocol\DataPacket;
-use pocketmine\network\protocol\Info;
-use pocketmine\network\protocol\LoginPacket;
-use pocketmine\entity\FallingBlock;
-use pocketmine\nbt\NBT;
-use pocketmine\item\ItemBlock;
-use pocketmine\block\SignPost;
-use pocketmine\item\Sign;
 use pocketmine\item\Item;
-use pocketmine\block\Liquid;
+use pocketmine\item\ItemBlock;
+
 
 /**
  * CTF Arena Builder
@@ -132,12 +104,12 @@ class CTFBlockBuilder extends MiniGameBase  {
 	 * Building CTF Arena
 	 *
 	 * @param Level $level        	
-	 * @param unknown $floorwidth        	
-	 * @param unknown $floorheight        	
-	 * @param unknown $dataX        	
-	 * @param unknown $dataY        	
-	 * @param unknown $dataZ        	
-	 * @param unknown $wallType        	
+	 * @param  $floorwidth
+	 * @param  $floorheight
+	 * @param  $dataX
+	 * @param  $dataY
+	 * @param  $dataZ
+	 * @param  $wallType
 	 */
 	public function plotArenaMap(Level $level, $floorwidth, $floorheight, $dataX, $dataY, $dataZ, $wallType) {
 		$x = $dataX;
@@ -186,10 +158,10 @@ class CTFBlockBuilder extends MiniGameBase  {
 	 * Build Border
 	 *
 	 * @param Level $level        	
-	 * @param unknown $floorwidth        	
-	 * @param unknown $dataX        	
-	 * @param unknown $dataY        	
-	 * @param unknown $dataZ        	
+	 * @param  $floorwidth
+	 * @param  $dataX
+	 * @param  $dataY
+	 * @param  $dataZ
 	 */
 	public function markTeamBorder(Level $level, $floorwidth, $dataX, $dataY, $dataZ) {
 		for($rz = 0; $rz < $floorwidth; $rz ++) {
@@ -209,10 +181,10 @@ class CTFBlockBuilder extends MiniGameBase  {
 	 * Build Closed Fence | Gate
 	 *
 	 * @param Level $level        	
-	 * @param unknown $floorwidth        	
-	 * @param unknown $dataX        	
-	 * @param unknown $dataY        	
-	 * @param unknown $dataZ        	
+	 * @param  $floorwidth
+	 * @param  $dataX
+	 * @param  $dataY
+	 * @param  $dataZ
 	 */
 	public function closeTeamGates(Level $level, $floorwidth, $dataX, $dataY, $dataZ) {
 		$gateBlock = $this->getSetup ()->getBlockId ( CTFSetup::CTF_BLOCK_ID_BORDER_FENCE );
@@ -233,10 +205,10 @@ class CTFBlockBuilder extends MiniGameBase  {
 	 * Add Team Defence Wall
 	 *
 	 * @param Level $level        	
-	 * @param unknown $floorwidth        	
-	 * @param unknown $dataX        	
-	 * @param unknown $dataY        	
-	 * @param unknown $dataZ        	
+	 * @param  $floorwidth
+	 * @param  $dataX
+	 * @param  $dataY
+	 * @param  $dataZ
 	 */
 	public function addDefenceGates(Level $level, $floorwidth, $dataX, $dataY, $dataZ) {
 		$gateBlock = $this->getSetup ()->getBlockId ( CTFSetup::CTF_BLOCK_ID_DEFENCE_WALL_BLUE_TEAM );
@@ -269,10 +241,10 @@ class CTFBlockBuilder extends MiniGameBase  {
 	 * Open Fence
 	 *
 	 * @param Level $level        	
-	 * @param unknown $floorwidth        	
-	 * @param unknown $dataX        	
-	 * @param unknown $dataY        	
-	 * @param unknown $dataZ        	
+	 * @param  $floorwidth
+	 * @param  $dataX
+	 * @param  $dataY
+	 * @param  $dataZ
 	 */
 	public function openTeamGates(Level $level, $floorwidth, $dataX, $dataY, $dataZ) {
 		for($rz = 0; $rz < $floorwidth; $rz ++) {
@@ -400,7 +372,10 @@ class CTFBlockBuilder extends MiniGameBase  {
 		$sy = $blueTeamFlagPos->y;
 		$sz = $blueTeamFlagPos->z;
 		$rb = $level->getBlock ( new Vector3 ( $sx, $sy, $sz ) );
-		$this->resetBlock ( $rb, $level, $blockType, $meta );
+		//$this->resetBlock ( $rb, $level, $blockType, $meta );
+		$block= Item::get(Item::CARPET,$meta);
+		$level->setBlock(new Position($sx,$sy,$sz, $level),$block->getBlock(),true,true);
+		
 		// add holder for emermy flag
 		$rb = $level->getBlock ( new Vector3 ( $sx, $sy - 1, $sz + 1 ) );
 		$this->resetBlock ( $rb, $level, 7, 0 );//player can not break
@@ -422,7 +397,9 @@ class CTFBlockBuilder extends MiniGameBase  {
 		$sy = $redTeamFlagPos->y;
 		$sz = $redTeamFlagPos->z;
 		$rb = $level->getBlock ( new Vector3 ( $sx, $sy, $sz ) );
-		$this->resetBlock ( $rb, $level, $blockType, $meta );
+// 		$this->resetBlock ( $rb, $level, $blockType, $meta );
+		$block= Item::get(Item::CARPET,$meta);
+		$level->setBlock(new Position($sx,$sy,$sz, $level),$block->getBlock(),true,true);
 		
 		$rb = $level->getBlock ( new Vector3 ( $sx, $sy + 1, $sz ) );
 		$this->resetBlock ( $rb, $level, 0, 0 );
@@ -443,12 +420,12 @@ class CTFBlockBuilder extends MiniGameBase  {
 	 * Remove Wall
 	 *
 	 * @param Level $level        	
-	 * @param unknown $width        	
-	 * @param unknown $height        	
-	 * @param unknown $dataX        	
-	 * @param unknown $dataY        	
-	 * @param unknown $dataZ        	
-	 * @param unknown $wallType        	
+	 * @param  $width
+	 * @param  $height
+	 * @param  $dataX
+	 * @param  $dataY
+	 * @param  $dataZ
+	 * @param  $wallType
 	 * @return boolean
 	 */
 	public function removeArenaWall(Level $level, $width, $height, $dataX, $dataY, $dataZ, $wallType) {
@@ -487,18 +464,17 @@ class CTFBlockBuilder extends MiniGameBase  {
 	 * Build Team Wall
 	 *
 	 * @param Level $level        	
-	 * @param unknown $width        	
-	 * @param unknown $height        	
-	 * @param unknown $dataX        	
-	 * @param unknown $dataY        	
-	 * @param unknown $dataZ        	
-	 * @param unknown $wallType        	
+	 * @param  $width
+	 * @param  $height
+	 * @param  $dataX
+	 * @param  $dataY
+	 * @param  $dataZ
+	 * @param  $wallType
 	 * @return boolean
 	 */
 	public function buildTeamArenaWall(Level $level, $width, $height, $dataX, $dataY, $dataZ, $wallType) {
 		$status = false;
 		try {
-			$doorExist = 0;
 			$x = $dataX;
 			for($rx = 0; $rx < $width; $rx ++) {
 				$y = $dataY;
@@ -541,18 +517,17 @@ class CTFBlockBuilder extends MiniGameBase  {
 	 * Build Team Base
 	 *
 	 * @param Level $level        	
-	 * @param unknown $width        	
-	 * @param unknown $height        	
-	 * @param unknown $dataX        	
-	 * @param unknown $dataY        	
-	 * @param unknown $dataZ        	
-	 * @param unknown $wallType        	
+	 * @param  $width
+	 * @param  $height
+	 * @param  $dataX
+	 * @param  $dataY
+	 * @param  $dataZ
+	 * @param  $wallType
 	 * @return boolean
 	 */
 	public function buildTeamArenaBase(Level $level, $width, $height, $dataX, $dataY, $dataZ, $wallType) {
 		$status = false;
 		try {
-			$doorExist = 0;
 			$x = $dataX;
 			for($rx = 0; $rx < $width; $rx ++) {
 				$y = $dataY;
@@ -595,18 +570,17 @@ class CTFBlockBuilder extends MiniGameBase  {
 	 * Build Team Arena
 	 *
 	 * @param Level $level        	
-	 * @param unknown $width        	
-	 * @param unknown $height        	
-	 * @param unknown $dataX        	
-	 * @param unknown $dataY        	
-	 * @param unknown $dataZ        	
-	 * @param unknown $wallType        	
+	 * @param  $width
+	 * @param  $height
+	 * @param  $dataX
+	 * @param  $dataY
+	 * @param  $dataZ
+	 * @param  $wallType
 	 * @return boolean
 	 */
 	public function buildTeamArena(Level $level, $width, $height, $dataX, $dataY, $dataZ, $wallType) {
 		$status = false;
 		try {
-			$doorExist = 0;
 			$x = $dataX;
 			for($rx = 0; $rx < $width; $rx ++) {
 				$y = $dataY;
@@ -649,18 +623,17 @@ class CTFBlockBuilder extends MiniGameBase  {
 	 * Build Blue Team Arena
 	 *
 	 * @param Level $level        	
-	 * @param unknown $width        	
-	 * @param unknown $height        	
-	 * @param unknown $dataX        	
-	 * @param unknown $dataY        	
-	 * @param unknown $dataZ        	
-	 * @param unknown $wallType        	
+	 * @param  $width
+	 * @param  $height
+	 * @param  $dataX
+	 * @param  $dataY
+	 * @param  $dataZ
+	 * @param  $wallType
 	 * @return boolean
 	 */
 	public function buildBlueTeamArena(Level $level, $width, $height, $dataX, $dataY, $dataZ, $wallType) {
 		$status = false;
 		try {
-			$doorExist = 0;
 			$x = $dataX;
 			for($rx = 0; $rx < $width; $rx ++) {
 				$y = $dataY;
@@ -703,18 +676,17 @@ class CTFBlockBuilder extends MiniGameBase  {
 	 * Build Red Team Arena
 	 *
 	 * @param Level $level        	
-	 * @param unknown $width        	
-	 * @param unknown $height        	
-	 * @param unknown $dataX        	
-	 * @param unknown $dataY        	
-	 * @param unknown $dataZ        	
-	 * @param unknown $wallType        	
+	 * @param  $width
+	 * @param  $height
+	 * @param  $dataX
+	 * @param  $dataY
+	 * @param  $dataZ
+	 * @param  $wallType
 	 * @return boolean
 	 */
 	public function buildRedTeamArena(Level $level, $width, $height, $dataX, $dataY, $dataZ, $wallType) {
 		$status = false;
 		try {
-			$doorExist = 0;
 			$x = $dataX;
 			for($rx = 0; $rx < $width; $rx ++) {
 				$y = $dataY;
@@ -791,7 +763,7 @@ class CTFBlockBuilder extends MiniGameBase  {
 	 *
 	 * @param Block $block
 	 * @param Player $p
-	 * @param unknown $blockType
+	 * @param  $blockType
 	 */
 	public function replaceBlockType(Level $level, Block $block, $blockType) {
 		$this->updateBlock2 ( $block, $level, $blockType );
@@ -802,7 +774,7 @@ class CTFBlockBuilder extends MiniGameBase  {
 	 *
 	 * @param Block $block        	
 	 * @param Player $xp        	
-	 * @param unknown $blockType        	
+	 * @param  $blockType
 	 */
 	public function updateBlock(Block $block, Player $xp, $blockType) {
 		$this->updateBlock2 ( $block, $xp->level, $blockType );
@@ -845,7 +817,7 @@ class CTFBlockBuilder extends MiniGameBase  {
 	 *
 	 * @param Block $block        	
 	 * @param Player $p        	
-	 * @param unknown $blockType        	
+	 * @param  $blockType
 	 */
 	public function renderBlockByType(Block $block, Player $p, $blockType) {
 		// randomly place a mine
@@ -869,16 +841,14 @@ class CTFBlockBuilder extends MiniGameBase  {
 	/**
 	 * remove arena
 	 *
-	 * @param unknown $player        	
-	 * @param unknown $xx        	
-	 * @param unknown $yy        	
-	 * @param unknown $zz        	
+	 * @param  $player
+	 * @param  $xx
+	 * @param  $yy
+	 * @param  $zz
 	 */
 	public function removeArena($player, $xx, $yy, $zz) {
 		$wallheighSize = 70;
-		$bsize = $this->boardsize;
 		$xmax = $this->boardsize + 3;
-		$ymax = $this->boardsize;
 		
 		For($z = 0; $z <= $xmax; $z ++) {
 			For($x = 0; $x <= $xmax; $x ++) {

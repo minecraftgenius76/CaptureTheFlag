@@ -20,6 +20,8 @@ use pocketmine\network\protocol\LoginPacket;
 use pocketmine\command\defaults\TeleportCommand;
 use pocketmine\item\Item;
 use pocketmine\item\ItemBlock;
+use pocketmine\event\TextContainer;
+use pocketmine\tile\Sign;
 
 /**
  * CTF Manager
@@ -252,21 +254,21 @@ class CTFManager  extends MiniGameBase  {
 		// handle join game
 		$maxTeamPlayers = $this->getSetup ()->getMaxPlayerPerTeam ();
 		$output = "";
-		$output .= "------------------------------\n";
+		$output .= TextFormat::DARK_GRAY."------------------------------\n";
 		$status = "OFF";
 		if ($this->getPlugIn ()->gameMode == 1) {
 			$status = "ON";
 		}
-		$output .= $this->getMsg ( "ctf.name" ) . " | " . $this->getMsg ( "ctf.status" ) . ": " . $status . "\n";
-		$output .= "------------------------------\n";
-		$output .= $this->getMsg ( "team.scores.red-players" ) . " [" . count ( $this->getPlugIn ()->redTeamPlayers ) . "/" . $maxTeamPlayers . "] " . $this->getMsg ( "team.scores.players" ) . "\n";
-		$output .= $this->getMsg ( "team.scores.blue-players" ) . " [" . count ( $this->getPlugIn ()->blueTeamPLayers ) . "/" . $maxTeamPlayers . "] " . $this->getMsg ( "team.scores.players" ) . "\n";
-		$output .= "------------------------------\n";
-		$output .= $this->getMsg ( "team.scores.round" ) . " [" . $this->getPlugIn ()->currentGameRound . "/" . $this->getPlugIn ()->maxGameRound . "]".$this->getMsg ( "team.scores.score" )."\n";
-		$output .= "------------------------------\n";
-		$output .= $this->getMsg ( "team.scores.redteam-wins" ) . $this->getPlugIn ()->redTeamWins . "\n";
-		$output .= $this->getMsg ( "team.scores.blueteam-wins" ) . $this->getPlugIn ()->blueTeamWins . "\n";
-		$output .= "------------------------------\n";
+		$output .= TextFormat::DARK_RED.$this->getMsg ( "ctf.name" ) . " | " . TextFormat::DARK_GREEN.$this->getMsg ( "ctf.status" ) . ": " . $status . "\n";
+		$output .= TextFormat::DARK_GRAY."------------------------------\n";
+		$output .= TextFormat::WHITE.$this->getMsg ( "team.scores.red-players" ) . " [" . count ( $this->getPlugIn ()->redTeamPlayers ) . "/" . $maxTeamPlayers . "] " . $this->getMsg ( "team.scores.players" ) . "\n";
+		$output .= TextFormat::WHITE.$this->getMsg ( "team.scores.blue-players" ) . " [" . count ( $this->getPlugIn ()->blueTeamPLayers ) . "/" . $maxTeamPlayers . "] " . $this->getMsg ( "team.scores.players" ) . "\n";
+		$output .= TextFormat::DARK_GRAY."------------------------------\n";
+		$output .= TextFormat::WHITE.$this->getMsg ( "team.scores.round" ) . " [" . $this->getPlugIn ()->currentGameRound . "/" . $this->getPlugIn ()->maxGameRound . "]".$this->getMsg ( "team.scores.score" )."\n";
+		$output .= TextFormat::DARK_GRAY."------------------------------\n";
+		$output .= TextFormat::AQUA.$this->getMsg ( "team.scores.redteam-wins" ) . $this->getPlugIn ()->redTeamWins . "\n";
+		$output .= TextFormat::AQUA.$this->getMsg ( "team.scores.blueteam-wins" ) . $this->getPlugIn ()->blueTeamWins . "\n";
+		$output .= TextFormat::DARK_GRAY."------------------------------\n";
 		$player->sendMessage ( $output );
 	}
 	
@@ -288,7 +290,45 @@ class CTFManager  extends MiniGameBase  {
 				$player->level->getBlockLightAt($blockTouched->x, $blockTouched->y, $blockTouched->z);
 				$this->handleNewGame ( $player );
 			}
+
+			$this->updateGameSigns($player);
+			
 			return;
+		}
+	}
+	
+	public function updateGameSigns(Player $player) {
+		$this->updateBlueTeamSign($player);
+		$this->updateRedTeamSign($player);		
+		//update new game sign
+		$signNewPos = $this->getSetup ()->getSignPos ( CTFSetup::CLICK_SIGN_NEW_GAME );
+		$tile = $player->level->getTile( new Position($signNewPos->x, $signNewPos->y, $signNewPos->z, $player->level));
+		if ($tile!=null) {
+			$tile->setText ( TextFormat::RED . "CTF ", TextFormat::GOLD ."Start New Game", TextFormat::WHITE . "Reset Arena" , TextFormat::GOLD . "[Tap]" );
+		}
+		
+		$statSignPos = $this->getSetup ()->getSignPos ( CTFSetup::CLICK_SIGN_SHOW_GAME_STAT );
+		$tile = $player->level->getTile( new Position($statSignPos->x, $statSignPos->y, $statSignPos->z, $player->level));
+		if ($tile!=null) {
+			$tile->setText ( TextFormat::RED . "CTF ", TextFormat::GOLD ."Play Stats", TextFormat::WHITE . "View" , TextFormat::GOLD . "[Tap]" );
+		}
+	}
+	
+	public function updateBlueTeamSign(Player $player) {
+		$joinBluePos = $this->getSetup ()->getSignPos ( CTFSetup::CLICK_SIGN_JOIN_BLUE_TEAM );
+		$tile = $player->level->getTile( new Position($joinBluePos->x, $joinBluePos->y, $joinBluePos->z, $player->level));
+		$maxTeamPlayers = $this->getSetup ()->getMaxPlayerPerTeam ();
+		if ($tile!=null) {
+			$tile->setText ( TextFormat::RED . "CTF ", TextFormat::BLUE ."BLUE TEAM", TextFormat::WHITE . "JOIN NOW"  , TextFormat::GOLD . "[" . count ( $this->plugin->blueTeamPLayers )."/".$maxTeamPlayers . "]");
+		}
+	}
+	
+	public function updateRedTeamSign(Player $player) {
+		$joinRedPos = $this->getSetup ()->getSignPos ( CTFSetup::CLICK_SIGN_JOIN_RED_TEAM );
+		$tile = $player->level->getTile( new Position($joinRedPos->x, $joinRedPos->y, $joinRedPos->z, $player->level));
+		$maxTeamPlayers = $this->getSetup ()->getMaxPlayerPerTeam ();
+		if ($tile!=null) {
+			$tile->setText ( TextFormat::RED . "CTF ", TextFormat::RED ."RED TEAM", TextFormat::WHITE . "JOIN NOW"  , TextFormat::GOLD . "[" . count ( $this->plugin->redTeamPlayers )."/".$maxTeamPlayers. "]");
 		}
 	}
 	
@@ -298,9 +338,11 @@ class CTFManager  extends MiniGameBase  {
 	 * @param Player $player        	
 	 */
 	public function handleNewGame(Player $player) {
-		$player->getServer ()->broadcastMessage ( "----------------------------------" );
-		$player->getServer ()->broadcastMessage ( $this->getMsg ( "game.new-game" ) );
-		$player->getServer ()->broadcastMessage ( "----------------------------------" );
+
+		//$player->sendMessage(TextFormat::AQUA. $this->getMsg ( "game.new-game" ));
+		$player->getServer ()->broadcastMessage (TextFormat::GREEN. $this->getMsg ( "game.new-game" ));
+		//$player->getServer ()->broadcastMessage (TextFormat::AQUA. $this->getMsg ( "game.new-game" ) , $this->plugin->blueTeamPLayers);
+
 		// reset close gates
 		$arenaSize = $this->getSetup ()->getArenaSize ();
 		$arenaPos = $this->getSetup ()->getGamePos ( CTFSetup::CTF_GAME_ARENA_POSITION );
@@ -309,9 +351,9 @@ class CTFManager  extends MiniGameBase  {
 		$this->getBuilder()->closeTeamGates ( $level, $arenaSize, $arenaPos->x + $arenaSize, $arenaPos->y, $arenaPos->z );
 		// reset fire
 		// blue team flag
-		$this->getBuilder ()->addBlueTeamFlag ( $level, 171, 11 );
+		$this->getBuilder ()->addBlueTeamFlag ( $level, Item::CARPET, 11 );
 		// add red team flag
-		$this->getBuilder ()->addRedTeamFlag ( $level, 171, 14 );
+		$this->getBuilder ()->addRedTeamFlag ( $level, Item::CARPET, 14 );
 		// add game button
 		$this->getBuilder ()->addGameButtons ( $level );
 		// reset stats
@@ -338,11 +380,12 @@ class CTFManager  extends MiniGameBase  {
 			return;
 		}
 	}
+
 	/**
 	 * Validate team captured flag
 	 *
-	 * @param Level $level        	
-	 * @param unknown $rb        	
+	 * @param Level $level
+	 * @param unknown $rb
 	 */
 	public function checkRedTeamCapturedEnermyFlag(Player $player, Level $level, $rb) {
 		$redTeamEnemyFlagPos = $this->getSetup ()->getFlagPos ( CTFSetup::CTF_FLAG_RED_TEAM_ENEMY );
@@ -352,27 +395,28 @@ class CTFManager  extends MiniGameBase  {
 			$blueTeamFlagPos = $this->getSetup ()->getFlagPos ( CTFSetup::CTF_FLAG_BLUE_TEAM );
 			$blueflag = $level->getBlock ( $blueTeamFlagPos );
 			if ($blueflag->getId () != 0) {
-				$player->sendMessage ( $this->getMsg ( "ctf.error.blueteam-flag-exist" ) );
+				$player->sendMessage (TextFormat::YELLOW. $this->getMsg ( "ctf.error.blueteam-flag-exist" ) );
 				// erase placed block
 				$this->getBuilder ()->resetBlock ( $rb, $level, 0 );
 				return;
 			}
 			// blue team has enermy flag, announce blue team winning
 			$output = "";
-			$output .= "------------------------------\n";
-			$output .= $this->getMsg ( "ctf.conglatulations" ) . "\n";
-			$output .= $this->getMsg ( "ctf.red-team.capturedflag" ) . "\n";
-			$output .= "------------------------------\n";
+			$output .= TextFormat::GRAY."------------------------------\n";
+			$output .= TextFormat::GREEN.$this->getMsg ( "ctf.conglatulations" ) . "\n";
+			$output .= TextFormat::RED.$this->getMsg ( "ctf.red-team.capturedflag" ) . "\n";
+			$output .= TextFormat::GRAY."------------------------------\n";
 			// update blue team winning score
 			$this->getPlugIn ()->redTeamWins ++;
-			$output .= $this->getMsg ( "ctf.blue-team.score" ) . $this->getPlugIn ()->blueTeamWins . "\n";
-			$output .= $this->getMsg ( "ctf.red-team.score" ) . $this->getPlugIn ()->redTeamWins . "\n";
-			$output .= "------------------------------\n";
-			$level->getServer ()->broadcastMessage ( $output );
-			
+			$output .= TextFormat::LIGHT_PURPLE.$this->getMsg ( "ctf.blue-team.score" ) . $this->getPlugIn ()->blueTeamWins . "\n";
+			$output .= TextFormat::LIGHT_PURPLE.$this->getMsg ( "ctf.red-team.score" ) . $this->getPlugIn ()->redTeamWins . "\n";
+			$output .= TextFormat::GRAY."------------------------------\n";
+			$level->getServer ()->broadcastMessage ( $output , $this->plugin->blueTeamPLayers );
+			$level->getServer ()->broadcastMessage ( $output , $this->plugin->redTeamPlayers );
+	
 			$this->getPlugIn ()->gameMode = 0;
 			$this->moveTeamBackToSpawnpointOnCapturedEnermyFlag ();
-			
+				
 			// send scheduled task
 			$this->handleNextRoundOfGame ( $level );
 		}
@@ -381,9 +425,9 @@ class CTFManager  extends MiniGameBase  {
 	/**
 	 * Validate Blue Team Captured Flag
 	 *
-	 * @param Player $player        	
-	 * @param Level $level        	
-	 * @param unknown $rb        	
+	 * @param Player $player
+	 * @param Level $level
+	 * @param unknown $rb
 	 */
 	public function checkBlueTeamCapturedEnermyFlag(Player $player, Level $level, $rb) {
 		$blueTeamEnemyFlagPos = $this->getSetup ()->getFlagPos ( CTFSetup::CTF_FLAG_BLUE_TEAM_ENEMY );
@@ -399,16 +443,20 @@ class CTFManager  extends MiniGameBase  {
 			}
 			// blue team has enermy flag, announce blue team winning
 			$output = "";
-			$output .= "------------------------------\n";
-			$output .= $this->getMsg ( "ctf.conglatulations" ) . "\n";
-			$output .= $this->getMsg ( "ctf.blue-team.capturedflag" ) . "\n";
-			$output .= "------------------------------\n";
+			$output .=TextFormat::GRAY. "------------------------------\n";
+			$output .= TextFormat::GREEN.$this->getMsg ( "ctf.conglatulations" ) . "\n";
+			$output .= TextFormat::BLUE.$this->getMsg ( "ctf.blue-team.capturedflag" ) . "\n";
+			$output .= TextFormat::GRAY."------------------------------\n";
 			// update blue team winning score
 			$this->getPlugIn ()->blueTeamWins ++;
-			$output .= $this->getMsg ( "ctf.blue-team.score" ) . $this->getPlugIn ()->blueTeamWins . "\n";
-			$output .= $this->getMsg ( "ctf.red-team.score" ) . $this->getPlugIn ()->redTeamWins . "\n";
-			$output .= "------------------------------\n";
-			$level->getServer ()->broadcastMessage ( $output );
+			$output .= TextFormat::LIGHT_PURPLE.$this->getMsg ( "ctf.blue-team.score" ) . $this->getPlugIn ()->blueTeamWins . "\n";
+			$output .= TextFormat::LIGHT_PURPLE.$this->getMsg ( "ctf.red-team.score" ) . $this->getPlugIn ()->redTeamWins . "\n";
+			$output .= TextFormat::GRAY."------------------------------\n";
+			//$level->getServer ()->broadcastMessage ( $output );
+			
+			$level->getServer ()->broadcastMessage ( $output , $this->plugin->blueTeamPLayers );
+			$level->getServer ()->broadcastMessage ( $output , $this->plugin->redTeamPlayers );
+			
 			$this->getPlugIn ()->gameMode = 0;
 			$this->moveTeamBackToSpawnpointOnCapturedEnermyFlag ();
 			// send scheduled task
@@ -453,19 +501,24 @@ class CTFManager  extends MiniGameBase  {
 	 */
 	public function handleJoinBlueTeam(Player $player) {
 		$blueTeamEntryPos = $this->getSetup ()->getGamePos ( CTFSetup::CTF_GAME_ARENA_POSITION_ENTRY_BLUE_TEAM );		
-		$player->level->getChunk($blueTeamEntryPos->x, $blueTeamEntryPos->z);
-		$player->teleport ( $blueTeamEntryPos );
-		$player->sendMessage ( $this->getMsg ( "team.welcome-blue" ) );
-		// $player->sendMessage("equip player with armor");
+		//$player->level->getChunk($blueTeamEntryPos->x, $blueTeamEntryPos->z);
+		$player->teleport (new Vector3($blueTeamEntryPos->x,$blueTeamEntryPos->y,$blueTeamEntryPos->z));
+				
+		$player->sendMessage ( TextFormat::BLUE.$this->getMsg ( "team.welcome-blue" ) );
+		$player->getLevel()->getBlockLightAt($blueTeamEntryPos->x, $blueTeamEntryPos->y, $blueTeamEntryPos->z);
+		
 		$this->getGameKit ()->putOnGameKit ( $player, CTFGameKit::KIT_BLUE_TEAM );
-		$player->sendMessage ( $this->getMsg ( "team.tap-start" ) );
+		$player->sendMessage ( TextFormat::GRAY.$this->getMsg ( "team.tap-start" ) );
 		
 		$this->getPlugIn ()->blueTeamPLayers [$player->getName ()] = $player;
-		$player->setNameTag ( $this->getMsg ( "team.blue" ) . " | " . $player->getName () );
-		$player->getLevel ()->getServer ()->broadcastMessage ( $player->getName () . $this->getMsg ( "team.joined-blue" ) );
+		$player->setNameTag ( TextFormat::BLUE.$this->getMsg ( "team.blue" ) . " | " . $player->getName () );
+		
+		//limit to joined players
+		$player->getLevel ()->getServer ()->broadcastMessage (TextFormat::GOLD. $player->getName () . TextFormat::BLUE.$this->getMsg ( "team.joined-blue" ), $this->getPlugIn()->blueTeamPLayers);
+		$player->getLevel ()->getServer ()->broadcastMessage (TextFormat::GOLD. $player->getName () . TextFormat::BLUE.$this->getMsg ( "team.joined-blue" ), $this->getPlugIn()->redTeamPlayers);
 		
 		foreach ( $this->getPlugIn ()->blueTeamPLayers as $p ) {
-			$p->sendMessage ( $this->getMsg ( "team.members" ) . $p->getName () );
+			$p->sendMessage (  TextFormat::GRAY.$this->getMsg ( "team.members" ) . TextFormat::BLUE.$p->getName () );
 		}
 	}
 	
@@ -476,18 +529,20 @@ class CTFManager  extends MiniGameBase  {
 	 */
 	public function handleJoinRedTeam(Player $player) {
 		$redTeamEntryPos = $this->getSetup ()->getGamePos ( CTFSetup::CTF_GAME_ARENA_POSITION_ENTRY_RED_TEAM );
-		$player->level->getChunk($redTeamEntryPos->x, $redTeamEntryPos->z);
-		$player->teleport ( $redTeamEntryPos );
-		$player->sendMessage ( $this->getMsg ( "team.welcome-red" ) );
-		// $this->addRedTeamPlayerAmor ( $player );
-		$this->getGameKit ()->putOnGameKit ( $player, CTFGameKit::KIT_RED_TEAM );
-		$player->sendMessage ( $this->getMsg ( "team.tap-start" ) );
-		$this->getPlugIn ()->redTeamPlayers [$player->getName ()] = $player;
-		$player->setNameTag ( $this->getMsg ( "team.red" ) . " | " . $player->getName () );
+		//$player->level->getChunk($redTeamEntryPos->x, $redTeamEntryPos->z);
+		$player->teleport (new Vector3($redTeamEntryPos->x,$redTeamEntryPos->y,$redTeamEntryPos->z));				
+		$player->sendMessage ( TextFormat::DARK_RED.$this->getMsg ( "team.welcome-red" ) );
+		$player->getLevel()->getBlockLightAt($redTeamEntryPos->x, $redTeamEntryPos->y, $redTeamEntryPos->z);
 		
-		$player->getLevel ()->getServer ()->broadcastMessage ( $player->getName () . $this->getMsg ( "team.joined-red" ) );
+		$this->getGameKit ()->putOnGameKit ( $player, CTFGameKit::KIT_RED_TEAM );
+		$player->sendMessage ( TextFormat::GRAY.$this->getMsg ( "team.tap-start" ) );
+		$this->getPlugIn ()->redTeamPlayers [$player->getName ()] = $player;
+		$player->setNameTag (TextFormat::RED. $this->getMsg ( "team.red" ) . " | " . $player->getName () );
+		
+		$player->getLevel ()->getServer ()->broadcastMessage (TextFormat::GOLD. $player->getName () . TextFormat::DARK_RED.$this->getMsg ( "team.joined-red" ), $this->plugin->blueTeamPLayers );
+		$player->getLevel ()->getServer ()->broadcastMessage (TextFormat::GOLD. $player->getName () . TextFormat::DARK_RED.$this->getMsg ( "team.joined-red" ), $this->plugin->redTeamPlayers );
 		foreach ( $this->getPlugIn ()->redTeamPlayers as $p ) {
-			$p->sendMessage ( $this->getMsg ( "team.members" ) . $p->getName () );
+			$p->sendMessage ( $this->getMsg ( TextFormat::GRAY."team.members" ) . TextFormat::DARK_RED.$p->getName () );
 		}
 	}
 	/**
@@ -501,20 +556,20 @@ class CTFManager  extends MiniGameBase  {
 			unset ( $this->getPlugIn ()->redTeamPlayers [$player->getName ()] );
 			$player->setNameTag ( $player->getName () );
 			$this->getGameKit ()->removePlayerIventory ( $player );
-			$player->updateMovement ();
 			$player->sendMessage ( $this->getMsg ( "game.remove-equipment" ) );
 		}
 		if (isset ( $this->getPlugIn ()->blueTeamPlayers [$player->getName ()] )) {
 			unset ( $this->getPlugIn ()->blueTeamPlayers [$player->getName ()] );
 			$player->setNameTag ( $player->getName () );
 			$this->getGameKit ()->removePlayerIventory ( $player );
-			$player->updateMovement ();
 			$player->sendMessage ( $this->getMsg ( "game.remove-equipment" ) );
 		}
-		
+
 		$gameWaitingRoomPos = $this->getSetup ()->getGamePos ( CTFSetup::CTF_GAME_ARENA_POSITION_WAITING_ROOM );
 		$player->teleport ( $gameWaitingRoomPos );
-		$player->getServer ()->broadcastMessage ( $player->getName () . $this->getMsg ( "ctf.left-game" ) );
+		
+		$player->getServer ()->broadcastMessage ( $player->getName () . $this->getMsg ( "ctf.left-game" ), $this->plugin->blueTeamPLayers);
+		$player->getServer ()->broadcastMessage ( $player->getName () . $this->getMsg ( "ctf.left-game" ) , $this->plugin->redTeamPlayers);
 	}
 	
 	/**
@@ -524,18 +579,18 @@ class CTFManager  extends MiniGameBase  {
 		// send all players to waiting room
 		$waitingRoomPos = $this->getSetup ()->getGamePos ( CTFSetup::CTF_GAME_ARENA_POSITION_WAITING_ROOM );
 		foreach ( $this->getPlugIn ()->redTeamPlayers as $rp ) {
-			$rp->sendMessage ( $this->getMsg ( "game.stop" ) );
+			$rp->sendMessage ( TextFormat::YELLOW.$this->getMsg ( "game.stop" ) );
 			$rp->setNameTag ( $rp->getName () );
 			$this->getGameKit ()->removePlayerIventory ( $rp );
-			$rp->sendMessage ( $this->getMsg ( "ctf.return-waiting-area" ) );
+			$rp->sendMessage ( TextFormat::GRAY.$this->getMsg ( "ctf.return-waiting-area" ) );
 			$rp->teleport ( $waitingRoomPos );
 		}
 		
 		foreach ( $this->getPlugIn ()->blueTeamPLayers as $bp ) {
-			$bp->sendMessage ( $this->getMsg ( "game.stop" ) );
+			$bp->sendMessage ( TextFormat::YELLOW.$this->getMsg ( "game.stop" ) );
 			$bp->setNameTag ( $bp->getName () );
 			$this->getGameKit ()->removePlayerIventory ( $bp );
-			$bp->sendMessage ( $this->getMsg ( "ctf.return-waiting-area" ) );
+			$bp->sendMessage ( TextFormat::GRAY.$this->getMsg ( "ctf.return-waiting-area" ) );
 			$bp->teleport ( $waitingRoomPos );
 		}
 		
@@ -572,7 +627,7 @@ class CTFManager  extends MiniGameBase  {
 		// Join RED Team SIGN
 		if (round ( $blockTouched->x ) == round ( $joinRedPos->x ) && round ( $blockTouched->y ) == round ( $joinRedPos->y ) && round ( $blockTouched->z ) == round ( $joinRedPos->z )) {
 			if (count ( $this->getPlugIn ()->redTeamPlayers ) >= $maxTeamPlayers) {
-				$player->sendMessage ( $this->getMsg (  "game.full" ) );
+				$player->sendMessage (TextFormat::YELLOW. $this->getMsg (  "game.full" ) );
 				return;
 			}
 			if ($this->getPlugIn ()->gameMode == 0) {
@@ -581,8 +636,21 @@ class CTFManager  extends MiniGameBase  {
 				$this->handleNewGame ( $player );
 			}
 			$this->handleJoinRedTeam ( $player );
-			// $player->sendMessage ( "------------------------------" );
-			$player->sendMessage ( $this->getMsg ( "team.scores.red-players" ) . " [" . count ( $this->getPlugIn ()->redTeamPlayers ) . "/" . $maxTeamPlayers . "] " . $this->getMsg ( "team.scores.players" ) );
+			$player->sendMessage (TextFormat::DARK_RED. $this->getMsg ( "team.scores.red-players" ) . " [" . count ( $this->getPlugIn ()->redTeamPlayers ) . "/" . $maxTeamPlayers . "] " . $this->getMsg ( "team.scores.players" ) );
+			$this->updateRedTeamSign($player);
+			//try workaround PM 1.5 invisvilities bug
+			for($i = 1; $i < 1000; $i ++) {
+				// delay
+			}
+			foreach ($this->plugin->redTeamPlayers as $bp ) {
+				$player->showPlayer($bp);
+				$bp->showPlayer($player);
+			}
+			foreach ($this->plugin->blueTeamPLayers as $bp ) {
+				$player->showPlayer($bp);
+				$bp->showPlayer($player);
+			}
+							
 			return;
 		}
 	}
@@ -599,16 +667,31 @@ class CTFManager  extends MiniGameBase  {
 		// Join BLUE Team SIGN
 		if (round ( $blockTouched->x ) == round ( $joinBluePos->x ) && round ( $blockTouched->y ) == round ( $joinBluePos->y ) && round ( $blockTouched->z ) == round ( $joinBluePos->z )) {
 			if (count ( $this->getPlugIn ()->blueTeamPLayers ) >= $maxTeamPlayers) {
-				$player->sendMessage ( $this->getMsg ( "game.full" ) );
+				$player->sendMessage (TextFormat::YELLOW. $this->getMsg ( "game.full" ) );
 				return;
 			}
 			if ($this->getPlugIn ()->gameMode == 0) {
 				// auto start change if not started yet
 				$player->level->getBlockLightAt($blockTouched->x, $blockTouched->y, $blockTouched->z);
 				$this->handleNewGame ( $player );
-			}
+			}				
 			$this->handleJoinBlueTeam ( $player );
-			$player->sendMessage ( $this->getMsg ( "team.scores.blue-players" ) . " [" . count ( $this->getPlugIn ()->blueTeamPLayers ) . "/" . $maxTeamPlayers . "] " . $this->getMsg ( "team.scores.players" ) );
+			$player->sendMessage (TextFormat::BLUE. $this->getMsg ( "team.scores.blue-players" ) . " [" . count ( $this->getPlugIn ()->blueTeamPLayers ) . "/" . $maxTeamPlayers . "] " . $this->getMsg ( "team.scores.players" ) );
+
+			//try workaround PM 1.5 invisvilities bug
+			for($i = 1; $i < 1000; $i ++) {
+				// delay
+			}
+			foreach ($this->plugin->blueTeamPLayers as $bp ) {	
+				$player->showPlayer($bp);
+				$bp->showPlayer($player);
+			}
+			foreach ($this->plugin->redTeamPlayers as $bp ) {
+				$player->showPlayer($bp);
+				$bp->showPlayer($player);
+			}
+			
+			$this->updateBlueTeamSign($player);			
 			return;
 		}
 	}
@@ -636,7 +719,7 @@ class CTFManager  extends MiniGameBase  {
 	 */
 	public function resetGame(CommandSender $sender) {
 		$this->getPlugIn ()->gameMode = 0;
-		$player->sendMessage ( $player->sendMessage ( $this->getMsg ( "game.resetting" ) ) );
+		$player->sendMessage (TextFormat::YELLOW. $player->sendMessage ( $this->getMsg ( "game.resetting" ) ) );
 		$this->buildGameArena ( $sender );
 	}
 	
@@ -665,7 +748,7 @@ class CTFManager  extends MiniGameBase  {
 			}
 			$this->getMsg ( "game.resetting" );
 			$message = $this->getMsg ( "ctf.spawn_player" ) . " [" . $level->getName () . "]";
-			$player->sendMessage ( $message );
+			$player->sendMessage (TextFormat::AQUA. $message );
 			
 			$level->getChunk ( $level->getSafeSpawn ()->x, $level->getSafeSpawn ()->z );
 			$player->teleport ( $level->getSafeSpawn () );
@@ -701,13 +784,13 @@ class CTFManager  extends MiniGameBase  {
 				$this->log ( "level not found: " . $levelhome );
 				return;
 			}
-			$message = $this->getMsg ( "sign.teleport.spawn" ) . $level->getName ();
+			$message =TextFormat::GRAY. $this->getMsg ( "sign.teleport.spawn" ) . $level->getName ();
 			$player->sendMessage ( $message );
 			$level->getChunk($level->getSafeSpawn()->x, $level->getSafeSpawn()->z);
 			$player->teleport ( $level->getSafeSpawn() );
 			
 			$message = $this->getMsg ( "sign.teleport.ctf" ) . $levelhome;
-			$ctfGamePos = $this->getSetup ()->getGamePos ( CTFSetup::CTF_GAME_ENTRY );
+			$ctfGamePos =TextFormat::GRAY. $this->getSetup ()->getGamePos ( CTFSetup::CTF_GAME_ENTRY );
 			$level->getChunk($ctfGamePos->x, $ctfGamePos->z);
 			$player->teleport ( $ctfGamePos );
 			$player->sendMessage ( $message );
@@ -723,7 +806,7 @@ class CTFManager  extends MiniGameBase  {
 		$arenaSize = $this->getSetup ()->getArenaSize ();
 		$arenaPos = $this->getSetup ()->getGamePos ( CTFSetup::CTF_GAME_ARENA_POSITION );
 		if (! $sender instanceof Player) {
-			$sender->sendMessage ( $this->getMsg ( "ctf.error.wrong-sender" ) );
+			$sender->sendMessage ( TextFormat::YELLOW.$this->getMsg ( "ctf.error.wrong-sender" ) );
 			return;
 		}
 		$time_start = microtime ( true );
@@ -733,9 +816,8 @@ class CTFManager  extends MiniGameBase  {
 		
 		$time_end = microtime ( true );
 		$time = $time_end - $time_start;
-		// $this->getPlugIn()->getLogger ()->info (TextFormat::AQUA."Building arena elapse time $time seconds\n");
 		$message = "building arena took time ".round($time,2). " seconds\n";
-		$sender->sendMessage ( $message );
+		$sender->sendMessage (TextFormat::GRAY. $message );
 	}
 	
 	/**
@@ -751,24 +833,24 @@ class CTFManager  extends MiniGameBase  {
 			// @fix-1
 			// //Check if Team has minimal players
 			if ($this->getPlugIn ()->blueTeamPLayers == null || $this->getPlugIn ()->blueTeamPLayers == null) {
-				$player->sendMessage ( $this->getMsg ( "game.not-enought-players" ) );
+				$player->sendMessage (TextFormat::YELLOW. $this->getMsg ( "game.not-enought-players" ) );
 				return;
 			}
 			if (count ( $this->getPlugIn ()->blueTeamPLayers ) == 0 ) {
-				$player->sendMessage ( $this->getMsg ( "game.not-enought-players" ) );
+				$player->sendMessage ( TextFormat::YELLOW.$this->getMsg ( "game.not-enought-players" ) );
 				return;
 			}
 			if (count ( $this->getPlugIn ()->blueTeamPLayers ) == 0) {
-				$player->sendMessage ( $this->getMsg ( "game.not-enought-players" ) );
+				$player->sendMessage (TextFormat::YELLOW. $this->getMsg ( "game.not-enought-players" ) );
 				return;
 			}			
 			if ($this->getPlugIn ()->gameMode == 0) {
 				$this->handleStartTheGame ( $level );
 			} else {
-				$output = "-------------------------\n";
-				$output .= $this->getMsg ( "game.in-progress" ) . "\n";
-				$output .= $this->getMsg ( "game.hit-stop" ) . "\n";
-				$output .= "-------------------------\n";
+				$output = TextFormat::DARK_GRAY."-------------------------\n";
+				$output .= TextFormat::YELLOW.$this->getMsg ( "game.in-progress" ) . "\n";
+				$output .= TextFormat::YELLOW.$this->getMsg ( "game.hit-stop" ) . "\n";
+				$output .= TextFormat::DARK_GRAY."-------------------------\n";
 				$player->sendMessage ( $output );
 			}
 		}
@@ -782,26 +864,21 @@ class CTFManager  extends MiniGameBase  {
 	public function handleStartTheGame(Level $level) {
 		// change gamemode
 		$this->getPlugIn ()->setGameMode ( 1 );
-		// $builder = new CTFArenaBuilder ( $this->getPlugIn() );
 		// blue team flag
 		$this->getBuilder ()->addBlueTeamFlag ( $level, 171, 11 );
 		// add red team flag
 		$this->getBuilder ()->addRedTeamFlag ( $level, 171, 14 );
 		// add fire and remove start button
 		$this->getBuilder ()->addRoundPlayButtons ( $level );
-		// remove any blue/red flag from players inventory
-		// avoid cheating
+		// remove any blue/red flag from players inventory - avoid cheating
 		if ($this->getPlugIn ()->blueTeamPLayers != null && count ( $this->getPlugIn ()->blueTeamPLayers ) > 0) {
 			foreach ( $this->getPlugIn ()->blueTeamPLayers as $p ) {
-				// remove any flag item from player inventory
-				$p->getInventory ()->remove ( new Item ( 171 ) );
+				$p->getInventory ()->remove ( new Item ( Item::CARPET ) );
 			}
-		}
-		
+		}		
 		if ($this->getPlugIn ()->redTeamPlayers != null && count ( $this->getPlugIn ()->redTeamPlayers ) > 0) {
 			foreach ( $this->getPlugIn ()->redTeamPlayers as $p ) {
-				// remove any flag item from player inventory
-				$p->getInventory ()->remove ( new Item ( 171 ) );
+				$p->getInventory ()->remove ( new Item ( Item::CARPET ) );
 			}
 		}
 		$arenaSize = $this->getSetup ()->getArenaSize ();
@@ -811,10 +888,13 @@ class CTFManager  extends MiniGameBase  {
 		// announce game
 		$this->getPlugIn ()->currentGameRound ++;
 		$output = "";
-		$output .= "-------------------------\n";
+		//$output .=TextFormat::GRAY. "-------------------------\n";
 		$output .= $this->getMsg ( "game.round" ) . " [" . $this->getPlugIn ()->currentGameRound . "/" . $this->getPlugIn ()->maxGameRound . "] " . $this->getMsg ( "game.go" ) . "\n";
-		$output .= "-------------------------\n";
-		$level->getServer ()->broadcastMessage ( $output );
+		//$output .= TextFormat::GRAY."-------------------------\n";
+		
+		$level->getServer ()->broadcastMessage (TextFormat::GREEN.$output , $this->plugin->redTeamPlayers);
+		$level->getServer ()->broadcastMessage (TextFormat::GREEN.$output , $this->plugin->blueTeamPLayers);
+		
 		// change gamemode
 		$this->getPlugIn ()->setGameMode ( 1 );
 	}
@@ -854,24 +934,24 @@ class CTFManager  extends MiniGameBase  {
 	public function handleBroadcastFinalScore(Player $player, $toEveryone = false) {
 		// brodcast
 		$output = "";
-		$output .= "------------------------------\n";
+		$output .= TextFormat::GRAY."------------------------------\n";
 		$output .= $this->getMsg ( "game.final.title" ) . "\n";
-		$output .= "------------------------------\n";
-		$output .= $this->getMsg ( "game.final.red-team" ) . $this->getPlugIn ()->redTeamWins . "\n";
-		$output .= $this->getMsg ( "game.final.blue-team" ) . $this->getPlugIn ()->blueTeamWins . "\n";
-		$output .= "------------------------------\n";
+		$output .= TextFormat::GRAY."------------------------------\n";
+		$output .=TextFormat::RED. $this->getMsg ( "game.final.red-team" ) . $this->getPlugIn ()->redTeamWins . "\n";
+		$output .=TextFormat::BLUE. $this->getMsg ( "game.final.blue-team" ) . $this->getPlugIn ()->blueTeamWins . "\n";
+		$output .=TextFormat::GRAY. "------------------------------\n";
 		// same score then it's a tie
 		if ($this->getPlugIn ()->redTeamWins == $this->getPlugIn ()->blueTeamWins) {
-			$output .= $this->getMsg ( "game.final.draw" ) . "\n";
+			$output .= TextFormat::GREEN.$this->getMsg ( "game.final.draw" ) . "\n";
 		} elseif ($this->getPlugIn ()->redTeamWins > $this->getPlugIn ()->blueTeamWins) {
-			$output .= $this->getMsg ( "game.final.red-win" ) . "\n";
+			$output .= TextFormat::GREEN.$this->getMsg ( "game.final.red-win" ) . "\n";
 		} elseif ($this->getPlugIn ()->blueTeamWins > $this->getPlugIn ()->redTeamWins) {
-			$output .= $this->getMsg ( "game.final.blue-win" ) . "\n";
+			$output .= TextFormat::GREEN.$this->getMsg ( "game.final.blue-win" ) . "\n";
 		}
-		$output .= "------------------------------\n";
+		$output .= TextFormat::GRAY."------------------------------\n";
 		if ($toEveryone) {
-			$player->getServer ()->broadcastMessage ( $output );
-			// $player->getServer()->broadcast($output, Server::BROADCAST_CHANNEL_USERS);
+			$player->getServer ()->broadcastMessage ( $output, $this->plugin->redTeamPlayers);
+			$player->getServer ()->broadcastMessage ( $output, $this->plugin->blueTeamPLayers);
 		} else {
 			$player->sendMessage ( $output );
 		}
@@ -906,53 +986,67 @@ class CTFManager  extends MiniGameBase  {
 			unset ( $this->getPlugIn ()->redTeamPlayers [$player->getName ()] );
 			$player->setNameTag ( $player->getName () );
 			// check if this player has the flag
-			if ($player->getInventory ()->contains ( new Item ( 171 ) )) {
+			if ($player->getInventory ()->contains ( new Item ( Item::CARPET ) )) {
 				// put this flag back to team
 				// assume red team only enermy flag - blue team
-				$msg = $player->getName () . " [" . $this->getMsg ( "ctf.return-flag" ) . "]";
+				$msg = TextFormat::GRAY.$player->getName () . " [" . $this->getMsg ( "ctf.return-flag" ) . "]";
 				$player->getServer ()->broadcastMessage ( $msg );
 				
-				$this->getBuilder ()->addBlueTeamFlag ( $player->getLevel (), 171, 11 );
+				$this->getBuilder ()->addBlueTeamFlag ( $player->getLevel (), Item::CARPET, 11 );
 				// remove it from player
-				$player->getInventory ()->remove ( new Item ( 171 ) );
+				$player->getInventory ()->remove ( new Item ( Item::CARPET ) );
 			}
 		}
 		
 		if (isset ( $this->getPlugIn ()->blueTeamPlayers [$player->getName ()] )) {
-			$msg = $player->getName () . $this->getMsg ( "team.left-blue" );
-			$player->getServer ()->broadcastMessage ( $msg );
+			$msg = TextFormat::WHITE.$player->getName () . $this->getMsg ( "team.left-blue" );
+			//player left
+			$player->getServer ()->broadcastMessage ( $msg, $this->getPlugIn ()->blueTeamPlayers);
+			$player->getServer ()->broadcastMessage ( $msg, $this->getPlugIn ()->redTeamPlayers);
+						
 			unset ( $this->getPlugIn ()->blueTeamPlayers [$player->getName ()] );
 			$player->setNameTag ( $player->getName () );
-			if ($player->getInventory ()->contains ( new Item ( 171 ) )) {
+			if ($player->getInventory ()->contains ( new Item ( Item::CARPET ) )) {
 				// put this flag back to team
-				$msg = $player->getName () . " [" . $this->getMsg ( "ctf.return-flag" ) . "]";
-				$player->getServer ()->broadcastMessage ( $msg );
+				$msg = TextFormat::WHITE.$player->getName () . " [" . $this->getMsg ( "ctf.return-flag" ) . "]";
+				//$player->getServer ()->broadcastMessage ( $msg );
+				$player->getServer ()->broadcastMessage ( $msg, $this->getPlugIn ()->blueTeamPlayers);
+				$player->getServer ()->broadcastMessage ( $msg, $this->getPlugIn ()->redTeamPlayers);
 				
-				$this->getBuilder ()->addRedTeamFlag ( $player->getLevel (), 171, 14 );
+				$this->getBuilder ()->addRedTeamFlag ( $player->getLevel (), Item::CARPET, 14 );
 				// remove it from player
-				$player->getInventory ()->remove ( new Item ( 171 ) );
+				$player->getInventory ()->remove ( new Item (Item::CARPET) );
 			}
 		}
 		
 		if ($this->getPlugIn ()->gameMode > 0) {
 			// auto stop the game and declare winner if no team member left in anyone team
 			if (count ( $this->getPlugIn ()->redTeamPlayers ) == 0 && count ( $this->getPlugIn ()->blueTeamPLayers ) > 0) {
-				$message = $this->getMsg ( "team.red-no-players" );
-				$player->getServer ()->broadcastMessage ( $message );
+				$message = TextFormat::WHITE.$this->getMsg ( "team.red-no-players" );
+				//$player->getServer ()->broadcastMessage ( $message );
+				$player->getServer ()->broadcastMessage ( $msg, $this->getPlugIn ()->blueTeamPlayers);
+				$player->getServer ()->broadcastMessage ( $msg, $this->getPlugIn ()->redTeamPlayers);
+				
 				// blue team win
 				$this->getPlugIn ()->blueTeamWins ++;
 				$this->handleStopTheGame ();
 				$this->handleBroadcastFinalScore ( $player, true );
 			} elseif (count ( $this->getPlugIn ()->redTeamPlayers ) > 0 && count ( $this->getPlugIn ()->blueTeamPLayers ) == 0) {
-				$message = $this->getMsg ( "team.blue-no-players" );
-				$player->getServer ()->broadcastMessage ( $message );
+				$message = TextFormat::WHITE.$this->getMsg ( "team.blue-no-players" );
+				//$player->getServer ()->broadcastMessage ( $message );
+				$player->getServer ()->broadcastMessage ( $msg, $this->getPlugIn ()->blueTeamPlayers);
+				$player->getServer ()->broadcastMessage ( $msg, $this->getPlugIn ()->redTeamPlayers);
+				
 				// red team win
 				$this->getPlugIn ()->redTeamWins ++;
 				$this->handleStopTheGame ();
 				$this->handleBroadcastFinalScore ( $player, true );
 			} elseif (count ( $this->getPlugIn ()->redTeamPlayers ) == 0 && count ( $this->getPlugIn ()->blueTeamPLayers ) == 0) {
-				$message = $this->getMsg ( "team.no-players" );
-				$player->getServer ()->broadcastMessage ( $message );
+				$message = TextFormat::WHITE.$this->getMsg ( "team.no-players" );
+				//$player->getServer ()->broadcastMessage ( $message );
+				$player->getServer ()->broadcastMessage ( $msg, $this->getPlugIn ()->blueTeamPlayers);
+				$player->getServer ()->broadcastMessage ( $msg, $this->getPlugIn ()->redTeamPlayers);
+				
 				// draw
 				$this->handleStopTheGame ();
 				$this->handleBroadcastFinalScore ( $player, true );
@@ -980,6 +1074,9 @@ class CTFManager  extends MiniGameBase  {
 			$player->level->getChunk($gameWorldPos->x, $gameWorldPos->z);
 			$player->level->getBlockLightAt($gameWorldPos->x, $gameWorldPos->y, $gameWorldPos->z);
 			$player->teleport ( new Vector3 ( $gameWorldPos->x, $gameWorldPos->y, $gameWorldPos->z ) );
+			
+			//update signs
+			$this->updateGameSigns($player);			
 			return;
 		}
 		

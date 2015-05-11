@@ -4,6 +4,8 @@ namespace mcg76\game\ctf;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\entity\EntityDeathEvent;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\TextFormat;
 use pocketmine\Player;
@@ -49,6 +51,10 @@ class CTFListener extends MiniGameBase implements Listener {
 	public function __construct(CTFPlugIn $plugin) {
 		parent::__construct ( $plugin );
 	}
+
+    /**
+     * @param BlockBreakEvent $event
+     */
 	public function onBlockBreak(BlockBreakEvent $event) {
 		$player = $event->getPlayer ();
 		$b = $event->getBlock ();
@@ -81,6 +87,10 @@ class CTFListener extends MiniGameBase implements Listener {
 			}
 		}
 	}
+
+    /**
+     * @param BlockPlaceEvent $event
+     */
 	public function onBlockPlace(BlockPlaceEvent $event) {
 		$player = $event->getPlayer ();
 		$b = $event->getBlock ();
@@ -123,13 +133,18 @@ class CTFListener extends MiniGameBase implements Listener {
 			}
 		}
 	}
+
+    /**
+     * @param PlayerRespawnEvent $event
+     */
 	public function onPlayerRespawn(PlayerRespawnEvent $event) {
 		if ($event->getPlayer () instanceof Player) {
 			if ($this->getManager () == null) {
 				$this->log ( " getManager is null!" );
 			} else {
 				$this->getManager ()->handlePlayerEntry ( $event->getPlayer () );
-			}
+			}			
+			$event->getPlayer()->getLevel()->getBlockLightAt($event->getPlayer()->x, $event->getPlayer()->y, $event->getPlayer()->z);
 		}
 	}
 	
@@ -174,12 +189,36 @@ class CTFListener extends MiniGameBase implements Listener {
 			$this->getSetup ()->handleSetBlockSetup ( $player, $this->getPlugin ()->setupModeAction, $b->getId () );
 		}
 	}
-	public function onPlayerDeath(PlayerDeathEvent $event) {
+
+    /**
+     * @param PlayerDeathEvent $event
+     */
+	public function onPlayerDeath(EntityDeathEvent $event) {
 		// player held the flag until death
 		if ($event->getEntity () instanceof Player) {
 			$this->getManager ()->handlePlayerQuit ( $event->getEntity () );
 		}
 	}
+
+    /***
+     * @param EntityDamageEvent $event
+     */
+    public function onPlayerHurt (EntityDamageEvent $event) {
+        if ($event instanceof EntityDamageByEntityEvent) {
+            if ($event->getEntity() instanceof Player && $event->getDamager() instanceof Player) {
+                 if ( isset($this->getPlugin()->redTeamPlayers[$event->getEntity()->getName()]) && isset($this->getPlugin()->redTeamPlayers[$event->getDamager()->getName()])) {
+                     $event->setCancelled(true);
+                 } elseif( isset($this->getPlugin()->blueTeamPLayers[$event->getEntity()->getName()]) && isset($this->getPlugin()->blueTeamPLayers[$event->getDamager()->getName()])) {
+                    $event->setCancelled(true);
+                }
+            }
+        }
+
+    }
+
+    /**
+     * @param PlayerKickEvent $event
+     */
 	public function onPlayerKick(PlayerKickEvent $event) {
 		if ($event->getPlayer () instanceof Player) {
 			$this->getManager ()->handlePlayerQuit ( $event->getPlayer () );

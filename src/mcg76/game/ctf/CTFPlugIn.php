@@ -5,16 +5,9 @@ namespace mcg76\game\ctf;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\CommandExecutor;
-use pocketmine\Player;
-use pocketmine\Server;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\TextFormat;
-use pocketmine\utils\Config;
-use pocketmine\level\Position;
-use pocketmine\level\Level;
-use pocketmine\event\Listener;
-use pocketmine\math\Vector3 as Vector3;
-use pocketmine\block\Block;
+
 
 /**
  * CaptureTheFlag PlugIn - MCPE Mini-Game
@@ -68,7 +61,7 @@ class CTFPlugIn extends PluginBase implements CommandExecutor {
 	public function onLoad() {		
 		$this->initMinigameComponents();
 	}
-	
+
 	/**
 	 * OnEnable
 	 *
