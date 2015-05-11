@@ -501,9 +501,9 @@ class CTFManager  extends MiniGameBase  {
 	 */
 	public function handleJoinBlueTeam(Player $player) {
 		$blueTeamEntryPos = $this->getSetup ()->getGamePos ( CTFSetup::CTF_GAME_ARENA_POSITION_ENTRY_BLUE_TEAM );		
-		//$player->level->getChunk($blueTeamEntryPos->x, $blueTeamEntryPos->z);
-		$player->teleport (new Vector3($blueTeamEntryPos->x,$blueTeamEntryPos->y,$blueTeamEntryPos->z));
-				
+		//@BUG in latest PM 1.5 build 1131 sometimes player become invisible 
+		//$player->teleport (new Vector3($blueTeamEntryPos->x,$blueTeamEntryPos->y,$blueTeamEntryPos->z));
+		$player->teleport ($blueTeamEntryPos);
 		$player->sendMessage ( TextFormat::BLUE.$this->getMsg ( "team.welcome-blue" ) );
 		$player->getLevel()->getBlockLightAt($blueTeamEntryPos->x, $blueTeamEntryPos->y, $blueTeamEntryPos->z);
 		
@@ -530,7 +530,9 @@ class CTFManager  extends MiniGameBase  {
 	public function handleJoinRedTeam(Player $player) {
 		$redTeamEntryPos = $this->getSetup ()->getGamePos ( CTFSetup::CTF_GAME_ARENA_POSITION_ENTRY_RED_TEAM );
 		//$player->level->getChunk($redTeamEntryPos->x, $redTeamEntryPos->z);
-		$player->teleport (new Vector3($redTeamEntryPos->x,$redTeamEntryPos->y,$redTeamEntryPos->z));				
+		//@BUG in latest PM 1.5 build 1131 sometimes player become invisible
+		//$player->teleport (new Vector3($redTeamEntryPos->x,$redTeamEntryPos->y,$redTeamEntryPos->z));				
+		$player->teleport($redTeamEntryPos);
 		$player->sendMessage ( TextFormat::DARK_RED.$this->getMsg ( "team.welcome-red" ) );
 		$player->getLevel()->getBlockLightAt($redTeamEntryPos->x, $redTeamEntryPos->y, $redTeamEntryPos->z);
 		
