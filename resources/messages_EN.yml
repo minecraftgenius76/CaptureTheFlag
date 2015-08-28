@@ -1,7 +1,7 @@
 # -----------------------------------------------------------
 # MinecraftGenius76 - Mini-Games
 # CAPTURE THE FLAG
-# Youtube: http://www.youtube.com/user/minecraftgenius76
+# Youtube: https://www.youtube.com/channel/UClkKJZHkkTNdEsjyBcqtDIw
 # language file
 # Contributor(s): mcg76
 # -----------------------------------------------------------
@@ -14,7 +14,7 @@ ctf:
  name: "CAPTURE THE FLAG"
  status: "Status"
  spawn_player: "send player to"
- conglatulations: "***** Congratulation ********"
+ conglatulations: "***** Congratulation!Thankyou For Playing! ********"
  return-flag: "return enemy flag"
  return-waiting-area: "return player to waiting area"
  left-game: " left CTF game!"
@@ -38,7 +38,7 @@ ctf:
   not-game-stop: "only in-game player allow to issue stop"   
 plugin:
  enable: "Capture the Flag (CTF) Mini-Game - ENABLED"
- disable: "Capture the Flag (CTF) Mini-Game - DISABLED "
+ Enabled: "Capture the Flag (CTF) Mini-Game - Enabled "
 arena:
  created: "CTF Arena Created!"
 sign:
@@ -52,8 +52,8 @@ sign:
 command:
  ctf: "ctf"
  home: "home"
- joinred: "joinred"
- joinblue: "joinblue"
+ JoinRedTeam!: "GoRedTeam"
+ JoinBlueTeam!: "GoBlueTeam"
  stop: "stop"
  leave: "leave"
  start: "start"
@@ -114,8 +114,8 @@ game:
   title: "CTF Stopped, FINAL scores"
   red-team: " Red Team Score: "
   blue-team: " Blue Team Score: "
-  red-win: "* RED TEAM WIN! *"
-  blue-win: "* BLUE TEAM WIN! *"
+  red-win: "* Congrats!RedTeam'sWin *"
+  blue-win: "* Congrats!BlueTeam'sWin! *"
   draw: "* TIE (Draw) *"
 block:
  display-on: "CTF block position display ON"

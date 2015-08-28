@@ -1,10 +1,10 @@
-CAPTURE THE FLAG - MINI-GAME  v1.5.3
+CAPTURE THE FLAG - MINI-GAME  v2.3.0
 <pre>
 =========================================
 What is new?
 =========================================
 
-Change log for Version 1.5.3 -  Jan.31.2015
+Change log for Version 2.3.0 -  Jan.31.2015
 - add fix#2 configuration to prevent players destroy the arena other than the flag
 - new config file parameters
   # enforce block changes in game world
